@@ -11,5 +11,8 @@ int main() {
         std::cout << "creating file: " << file_name << std::endl;
         SST_gen::SSTBuilder temp(blocks_in_one_file, file_name);
     }
+
+
+
     return 0;
 }
