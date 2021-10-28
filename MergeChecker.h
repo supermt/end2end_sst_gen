@@ -1,16 +1,15 @@
 //
 // Created by supermt on 29/10/2021.
 //
-#ifndef END2END_SST_GEN_MERGECHECKER_H
-#define END2END_SST_GEN_MERGECHECKER_H
+#pragma once
 
 #include "SSTGen.h"
 #include "SST_reader.h"
 
-namespace sst_gen {
-    class Checker {
+namespace SST_gen {
+    class SSTChecker {
     public:
-        Checker(std::string target_file, std::string first_key, std::string last_key);
+        SSTChecker(std::string target_file, std::string first_key, std::string last_key);
 
         bool check();
 
@@ -24,4 +23,3 @@ namespace sst_gen {
 
 };// end of namsepace
 
-#endif //END2END_SST_GEN_MERGECHECKER_H

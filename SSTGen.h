@@ -7,9 +7,7 @@
 #include <cstring>
 #include <iostream>
 
-#ifndef END2END_SST_GEN_SSTGEN_H
-#define END2END_SST_GEN_SSTGEN_H
-
+#pragma once
 #ifndef PLATFORM_IS_LITTLE_ENDIAN
 #define PLATFORM_IS_LITTLE_ENDIAN (__BYTE_ORDER == __LITTLE_ENDIAN)
 #endif
@@ -89,6 +87,9 @@ namespace SST_gen {
         RandomStringGen key_builder;
         FILE *target_file;
     public:
+        std::string first_key;
+        std::string end_key;
+
         SSTBuilder(int block_num, std::string &file_name) : blocks(block_num), file_name_(file_name),
                                                             key_builder(BlockBuilder::key_len,
                                                                         block_num * BlockBuilder::entry_count) {
@@ -96,20 +97,22 @@ namespace SST_gen {
 
             int write_result = 0;
             int block_count = 0;
+            bool first_generated = true;
+            std::string next_key;
             for (auto block: blocks) {
                 block_count++;
                 for (int i = 0; i < BlockBuilder::entry_count; i++) {
-                    block.AddKey(key_builder.get_next());
+                    next_key = key_builder.get_next();
+                    if (first_generated) first_key = next_key;
+                    first_generated = false;
+                    block.AddKey(next_key);
                 }
                 write_result = block.WriteToFile(target_file);
                 assert(write_result != -1);
             }
+            end_key = next_key;
             fflush(target_file);
             fclose(target_file);
         }
     };
-
 }// end namespace
-
-
-#endif //END2END_SST_GEN_SSTGEN_H

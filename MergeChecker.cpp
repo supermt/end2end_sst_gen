@@ -6,9 +6,9 @@
 #include "SSTGen.h"
 #include "SST_reader.h"
 
-namespace sst_gen {
+namespace SST_gen {
 
-    bool Checker::check() {
+    bool SSTChecker::check() {
         bool checker_result;
         int count = 0;
         while (file_results.next_block()) {
@@ -17,10 +17,13 @@ namespace sst_gen {
         }
         file_start = file_results.first_key;
         file_end = file_results.end_key;
-        return (file_start == target_start && file_end == target_end);
+        bool start_eq = (file_start == target_start);
+        bool end_eq = (file_end == target_end);
+        return (start_eq && end_eq);
     }
 
-    Checker::Checker(std::string target_file, std::string first_key, std::string last_key) : file_results(target_file) {
+    SSTChecker::SSTChecker(std::string target_file, std::string first_key, std::string last_key) : file_results(
+            target_file) {
         target_start = first_key;
         target_end = last_key;
     }
