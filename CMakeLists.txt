@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.16)
 project(end2end_sst_gen)
 
 set(CMAKE_CXX_STANDARD 14)
-
 find_package(gflags REQUIRED)
 add_library(SST_GEN SSTGen.cpp MergeChecker.cpp sst_reader.cc)
 target_include_directories (SST_GEN PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

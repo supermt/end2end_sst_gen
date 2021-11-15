@@ -10,14 +10,16 @@
 #include <ftw.h>
 #include <cstdlib>
 
-
+#define STRIP_FLAG_HELP 0
 #define SST_SUFFIX "*.sst"
 
 DEFINE_string(path_name, "./", "Define the file store place for the system");
 DEFINE_bool(show_work_progress, true, "Default is true, and will print out all results");
 DEFINE_uint64(access_time, 1000000l, "How many random access operations in the workload");
 DEFINE_uint64(seed, 0, "Random seed");
+
 DECLARE_bool(help);
+DECLARE_bool(helpshort);
 
 std::vector<std::string> sst_files;
 
@@ -35,6 +37,19 @@ static int explore(const char *fpath,
 }
 
 int main(int argc, char **argv) {
+
+    gflags::ParseCommandLineNonHelpFlags(&argc, &argv, true);
+    gflags::HandleCommandLineHelpFlags();
+    if (FLAGS_help) {
+        FLAGS_help = false;
+        FLAGS_helpshort = true;
+    }
+    gflags::SetUsageMessage(std::string("\nUSAGE:\n") + std::string(argv[0]) +
+                            " [OPTIONS]...");
+    gflags::SetVersionString("version: 1.0.0");
+
+    gflags::ParseCommandLineFlags(&argc, &argv, false);
+
     ftw(FLAGS_path_name.c_str(), explore, 8);
     if (FLAGS_show_work_progress) {
         for (const auto &file_name: sst_files) {
