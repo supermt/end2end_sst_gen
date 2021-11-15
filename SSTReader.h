@@ -8,23 +8,30 @@
 #include "SSTGen.h"
 
 namespace SST_gen {
-    class SST_reader {
+    class SSTReader {
     public:
-        SST_reader(std::string filename);
+        SSTReader(std::string filename);
+
+        bool entry_at(int position, std::string *key, std::string *value);
 
         bool next_block();
 
         bool check_block();
+
+        int num_blocks();
+
+        int num_entries();
 
         std::string first_key;
         std::string end_key;
 
     private:
         FILE *opened_file;
+        std::string file_name;
         char read_buffer[BLOCK_SIZE];
         int block_index = 0;
         bool finished;
-
+        uint64_t file_size;
         std::string last_block_end = "";
     };
 

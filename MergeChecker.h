@@ -4,7 +4,7 @@
 #pragma once
 
 #include "SSTGen.h"
-#include "SST_reader.h"
+#include "SSTReader.h"
 
 namespace SST_gen {
     class SSTChecker {
@@ -14,7 +14,7 @@ namespace SST_gen {
         bool check();
 
     private:
-        SST_reader file_results;
+        SSTReader file_results;
         std::string target_start;
         std::string target_end;
         std::string file_start;

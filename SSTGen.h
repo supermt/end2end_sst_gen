@@ -66,7 +66,7 @@ namespace SST_gen {
         const static int header_len = 64;
         const static int key_len = 16;
         const static int value_len = 10;
-        const static int entry_count = 312;
+        const static int single_block_entry_count = 312;
 
         BlockBuilder() : left_offset(0), right_offset(0) {
             memset(buffer, 's', BLOCK_SIZE);
@@ -92,7 +92,7 @@ namespace SST_gen {
 
         SSTBuilder(int block_num, std::string &file_name) : blocks(block_num), file_name_(file_name),
                                                             key_builder(BlockBuilder::key_len,
-                                                                        block_num * BlockBuilder::entry_count) {
+                                                                        block_num * BlockBuilder::single_block_entry_count) {
             target_file = fopen(file_name_.c_str(), "w");
 
             int write_result = 0;
@@ -101,7 +101,7 @@ namespace SST_gen {
             std::string next_key;
             for (auto block: blocks) {
                 block_count++;
-                for (int i = 0; i < BlockBuilder::entry_count; i++) {
+                for (int i = 0; i < BlockBuilder::single_block_entry_count; i++) {
                     next_key = key_builder.get_next();
                     if (first_generated) first_key = next_key;
                     first_generated = false;

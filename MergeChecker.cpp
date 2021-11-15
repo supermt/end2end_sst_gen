@@ -4,7 +4,7 @@
 
 #include "MergeChecker.h"
 #include "SSTGen.h"
-#include "SST_reader.h"
+#include "SSTReader.h"
 
 namespace SST_gen {
 

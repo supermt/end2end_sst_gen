@@ -41,7 +41,7 @@ namespace SST_gen {
 
     void BlockBuilder::FillValuePart() {
         // dummy function, just fill 312 * 10 bytes of data;
-        memset(buffer + left_offset, 'v', entry_count * value_len);
+        memset(buffer + left_offset, 'v', single_block_entry_count * value_len);
     }
 
     void BlockBuilder::AddKey(std::string input) {
