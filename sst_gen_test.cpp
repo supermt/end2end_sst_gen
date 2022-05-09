@@ -35,6 +35,7 @@ int main() {
     std::string suffix = ".sst";
 
     SST_gen::OverlapMode mode;
+    std::cout << FLAGS_overlap_mode << std::endl;
     if (FLAGS_overlap_mode == "full") {
         mode = SST_gen::kFull;
     } else if (FLAGS_overlap_mode == "none") {
@@ -43,6 +44,13 @@ int main() {
         mode = SST_gen::kRandom;
     }
 
+    sst_file_num = start_value.size();
+
+    if (mode == SST_gen::kNone) {
+        for (int i = 0; i < sst_file_num; i++) {
+            start_value[i] = i * FLAGS_entries;
+        }
+    }
     for (int i = 0; i < sst_file_num; i++) {
         std::string file_name = std::to_string(i) + suffix;
         std::cout << "creating file: " << file_name << std::endl;

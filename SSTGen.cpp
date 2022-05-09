@@ -34,10 +34,6 @@ namespace SST_gen {
         left_offset += header_len;
     }
 
-    void BlockBuilder::AddEntry(std::pair<std::string, std::string>) {
-        return;
-        // dummy function
-    }
 
     void BlockBuilder::FillValuePart() {
         // dummy function, just fill 312 * 10 bytes of data;
@@ -53,7 +49,9 @@ namespace SST_gen {
     void RandomStringGen::generate() {
         next_key = start_value_;
         for (int i = 0; i < str_num_; i++) {
-            buffer_pool[i] = random_key(next_intkey(), key_len_);
+            uint64_t key_int = next_intkey();
+            if (i < 10) std::cout << key_int << std::endl;
+            buffer_pool[i] = random_key(key_int, key_len_);
         }
     }
 
@@ -66,10 +64,13 @@ namespace SST_gen {
         switch (overlap_) {
             case kNone:
                 next_key++;
+                break;
             case kFull:
                 next_key += 2;
+                break;
             case kRandom:
                 next_key += rand() % 10;
+                break;
         }
         return current_key;
     }
