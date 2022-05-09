@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <cstring>
 #include <iostream>
+#include <iomanip>
 
 #pragma once
 #ifndef PLATFORM_IS_LITTLE_ENDIAN
@@ -16,15 +17,35 @@
 namespace port {
     constexpr bool kLittleEndian = PLATFORM_IS_LITTLE_ENDIAN;
 }// end namespace
+
+inline std::string ToHex(const std::string &s, bool upper_case = true) {
+    std::ostringstream ret;
+
+    for (std::string::size_type i = 0; i < s.length(); ++i)
+        ret << std::hex << std::setfill('0') << std::setw(2) << (upper_case ? std::uppercase : std::nouppercase)
+            << (int) s[i];
+
+    return ret.str();
+}
+
 namespace SST_gen {
+
+    enum OverlapMode : int {
+        kNone = 0,
+        kFull,
+        kRandom,
+    };
 
     class RandomStringGen {
         // since the strings in one single SST should be fully sorted
-        int key_len_;
-        int str_num_;
-        uint64_t next_key;
+        int key_len_ = 0;
+        int str_num_ = 0;
+        uint64_t next_key = 0;
         std::vector<std::string> buffer_pool;
         int popped_keys;
+        int start_value_;
+        OverlapMode overlap_;
+
 
         void generate();
 
@@ -33,12 +54,23 @@ namespace SST_gen {
         uint64_t next_intkey();
 
     public:
-        RandomStringGen(int key_len, int str_num) : key_len_(key_len), str_num_(str_num), buffer_pool(str_num),
-                                                    popped_keys(0) {
+
+        RandomStringGen(int key_len, int str_num) : RandomStringGen(key_len, str_num, 0, kRandom) {}
+
+        RandomStringGen(int key_len, int str_num, int start_value, OverlapMode mode) : key_len_(key_len),
+                                                                                       str_num_(str_num),
+                                                                                       buffer_pool(str_num),
+                                                                                       popped_keys(0),
+                                                                                       start_value_(start_value),
+                                                                                       overlap_(mode) {
             std::cout << "generating" << std::endl;
             generate();
-//            std::cout << "sorting" << std::endl;
-//            sort_buffer();
+            std::cout << "sorting" << std::endl;
+            sort_buffer();
+            std::cout << "first ten keys" << std::endl;
+            for (int i = 0; i < 10; i++) {
+                std::cout << ToHex(buffer_pool[i]) << "," << std::endl;
+            }
         }
 
         std::string get_next() {
@@ -90,9 +122,13 @@ namespace SST_gen {
         std::string first_key;
         std::string end_key;
 
-        SSTBuilder(int block_num, std::string &file_name) : blocks(block_num), file_name_(file_name),
-                                                            key_builder(BlockBuilder::key_len,
-                                                                        block_num * BlockBuilder::single_block_entry_count) {
+        SSTBuilder(int block_num, std::string &file_name, int start_key, OverlapMode mode) : blocks(block_num),
+                                                                                             file_name_(file_name),
+                                                                                             key_builder(
+                                                                                                     BlockBuilder::key_len,
+                                                                                                     block_num *
+                                                                                                     BlockBuilder::single_block_entry_count,
+                                                                                                     start_key, mode) {
             target_file = fopen(file_name_.c_str(), "w");
 
             int write_result = 0;

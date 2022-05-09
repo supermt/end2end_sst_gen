@@ -51,6 +51,7 @@ namespace SST_gen {
     }
 
     void RandomStringGen::generate() {
+        next_key = start_value_;
         for (int i = 0; i < str_num_; i++) {
             buffer_pool[i] = random_key(next_intkey(), key_len_);
         }
@@ -61,8 +62,16 @@ namespace SST_gen {
     }
 
     uint64_t RandomStringGen::next_intkey() {
-        next_key += rand() % 10;
-        return next_key;
+        uint64_t current_key = next_key;
+        switch (overlap_) {
+            case kNone:
+                next_key++;
+            case kFull:
+                next_key += 2;
+            case kRandom:
+                next_key += rand() % 10;
+        }
+        return current_key;
     }
 
 }
