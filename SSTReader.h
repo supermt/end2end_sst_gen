@@ -12,6 +12,10 @@ namespace SST_gen {
     public:
         SSTReader(std::string filename);
 
+        ~SSTReader() {
+            fclose(opened_file);
+        }
+
         bool entry_at(int position, std::string *key, std::string *value);
 
         bool next_block();

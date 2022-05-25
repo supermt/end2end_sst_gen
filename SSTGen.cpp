@@ -69,7 +69,7 @@ namespace SST_gen {
                 next_key += 2;
                 break;
             case kRandom:
-                next_key += rand() % 10;
+                next_key += rand() % 10 + 1;
                 break;
         }
         return current_key;

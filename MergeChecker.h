@@ -10,7 +10,7 @@ namespace SST_gen {
     class SSTChecker {
     public:
         SSTChecker(std::string target_file, std::string first_key, std::string last_key);
-
+        ~SSTChecker() {}
         bool check();
 
     private:
